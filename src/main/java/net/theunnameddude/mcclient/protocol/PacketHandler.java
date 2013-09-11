@@ -77,13 +77,11 @@ public class PacketHandler {
 
                 String serverIdStr = new BigInteger( sha1.digest() ).toString( 16 );
 
-                String sessionId = "token:" + client.getAuth().getAccessToken() + ":" + client.getAuth().getProfileId();
-
                 StringBuilder stringurl = new StringBuilder();
                 String urlStr = "http://session.minecraft.net/game/joinserver.jsp";
                 stringurl.append( "http://session.minecraft.net/game/joinserver.jsp" )
                         .append( "?user=" ).append( URLEncoder.encode(client.getAuth().getUsername(), "UTF-8" ) )
-                        .append( "&sessionId=" ).append( URLEncoder.encode( sessionId, "UTF-8" ) )
+                        .append( "&sessionId=" ).append( URLEncoder.encode( client.getAuth().getConnectId(), "UTF-8" ) )
                         .append( "&serverId=" ).append(URLEncoder.encode(serverIdStr, "UTF-8"));
 
                 try {

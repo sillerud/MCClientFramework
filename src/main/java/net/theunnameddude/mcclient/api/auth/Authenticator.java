@@ -13,24 +13,38 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 public class Authenticator {
-    private final static String authServer = "https://authserver.mojang.com/authenticate";
+    private final static String mojangAuthServer = "https://authserver.mojang.com/authenticate";
+    private final static String minecraftAuthServer = "https://login.minecraft.net";
 
+
+    public static AuthenticationResponse offlineMode(String username) {
+        return new AuthenticationResponse( username );
+    }
 
     public static AuthenticationResponse sendRequest(String username, String password) {
-        JSONObject request = new JSONObject();
+        boolean mojangAccount = username.contains( "@" );
         try {
-            request.put( "agent", new JSONObject()
-                    .put( "name", "Minecraft")
-                    .put( "version", 1)
-            );
-            request.put( "username", username );
-            request.put( "password", password );
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            HttpURLConnection urlConnection = createConnection( authServer, request );
+            HttpURLConnection urlConnection = null;
+            if ( mojangAccount ) {
+                JSONObject request = new JSONObject();
+                try {
+                    request.put( "agent", new JSONObject()
+                            .put( "name", "Minecraft")
+                            .put( "version", 1)
+                    );
+                    request.put( "username", username );
+                    request.put( "password", password );
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                urlConnection = createConnection( mojangAuthServer, request );
+            } else {
+                StringBuilder builder = new StringBuilder()
+                        .append( "?user=" ).append( username )
+                        .append( "&password=" ).append( password )
+                        .append( "&version=" ).append( 14 );
+                urlConnection = createConnection( minecraftAuthServer, builder.toString() );
+            }
 
             BufferedReader reader = new BufferedReader( new InputStreamReader( urlConnection.getInputStream() ) );
             String line;
@@ -39,9 +53,14 @@ public class Authenticator {
                     break;
                 }
             }
+            reader.close();
 
-            JSONObject jsonObject = new JSONObject( line );
-            return new AuthenticationResponse( jsonObject );
+            if ( mojangAccount ) {
+                JSONObject jsonObject = new JSONObject( line );
+                return new AuthenticationResponse( jsonObject );
+            } else {
+                return new AuthenticationResponse( username, line );
+            }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -61,7 +80,8 @@ public class Authenticator {
             e.printStackTrace();
         }
         try {
-            HttpURLConnection urlConnection = createConnection( authServer, request );
+            HttpURLConnection urlConnection = null;
+            createConnection( mojangAuthServer, request );
             BufferedReader reader = new BufferedReader( new InputStreamReader( urlConnection.getInputStream() ) );
             String line;
             while ( (line = reader.readLine()) != null ) {
@@ -85,7 +105,7 @@ public class Authenticator {
 
     private static HttpURLConnection createConnection( String URL, JSONObject request ) throws IOException {
         byte[] params = request.toString().getBytes( Charset.forName( "UTF-8" ) );
-        HttpURLConnection urlConnection = (HttpURLConnection) new URL( authServer ).openConnection();
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL( URL ).openConnection();
 
         urlConnection.setConnectTimeout( 5000 );
         urlConnection.setReadTimeout( 5000 );
@@ -104,6 +124,17 @@ public class Authenticator {
         writer.write(params);
         writer.flush();
         writer.close();;
+        return urlConnection;
+    }
+
+    private static HttpURLConnection createConnection( String URL, String request ) throws IOException {
+        byte[] params = request.toString().getBytes( Charset.forName( "UTF-8" ) );
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL( URL + request ).openConnection();
+
+        urlConnection.setConnectTimeout( 5000 );
+        urlConnection.setReadTimeout(5000);
+        urlConnection.setRequestMethod("POST");
+
         return urlConnection;
     }
 
