@@ -22,10 +22,8 @@ public class Authenticator {
     }
 
     public static AuthenticationResponse sendRequest(String username, String password) {
-        boolean mojangAccount = username.contains( "@" );
         try {
             HttpURLConnection urlConnection = null;
-            if ( mojangAccount ) {
                 JSONObject request = new JSONObject();
                 try {
                     request.put( "agent", new JSONObject()
@@ -38,13 +36,6 @@ public class Authenticator {
                     e.printStackTrace();
                 }
                 urlConnection = createConnection( mojangAuthServer, request );
-            } else {
-                StringBuilder builder = new StringBuilder()
-                        .append( "?user=" ).append( username )
-                        .append( "&password=" ).append( password )
-                        .append( "&version=" ).append( 14 );
-                urlConnection = createConnection( minecraftAuthServer, builder.toString() );
-            }
 
             BufferedReader reader = new BufferedReader( new InputStreamReader( urlConnection.getInputStream() ) );
             String line;
@@ -54,13 +45,8 @@ public class Authenticator {
                 }
             }
             reader.close();
-
-            if ( mojangAccount ) {
-                JSONObject jsonObject = new JSONObject( line );
-                return new AuthenticationResponse( jsonObject );
-            } else {
-                return new AuthenticationResponse( username, line );
-            }
+            JSONObject jsonObject = new JSONObject( line );
+            return new AuthenticationResponse( jsonObject );
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
