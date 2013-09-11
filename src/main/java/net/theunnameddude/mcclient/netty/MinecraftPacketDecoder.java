@@ -14,6 +14,7 @@ public class MinecraftPacketDecoder extends ReplayingDecoder<Void> {
         while ( true ) {
             int startIndex = buf.readerIndex();
             short packetId = buf.readUnsignedByte();
+            //System.out.println( "Got packet 0x" + Integer.toHexString( ((byte)packetId) & 0xFF ).toUpperCase() );
             BasePacket packet = PacketUtils.readPacket( packetId, buf );
             checkpoint();
             if ( packet != null ) {

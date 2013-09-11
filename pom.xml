@@ -5,8 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.theunnameddude</groupId>
-    <artifactId>MCProtocolFramework</artifactId>
+    <artifactId>mc-protocol-framework</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <distributionManagement>
+        <repository>
+            <id>xioco-deployment</id>
+            <name>XioCo Releases</name>
+            <url>http://server.kjellern.net/repo/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>xioco-deployment</id>
+            <name>XioCo Snapshots</name>
+            <url>http://server.kjellern.net/repo/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>

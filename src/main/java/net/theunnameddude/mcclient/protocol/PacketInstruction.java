@@ -55,6 +55,21 @@ public enum PacketInstruction implements IPacketInstruction {
             short i = buf.readShort();
         }
     },
+    ReadUnsignedShort{
+        @Override
+        public void read(ByteBuf buf) {
+            buf.readUnsignedShort();
+        }
+    },
+    ReadIntUnsignedByteArray{
+        @Override
+        public void read(ByteBuf buf) {
+            int length = buf.readInt();
+            for ( int i = 0; i < length; i ++ ) {
+                buf.readUnsignedByte();
+            }
+        }
+    },
     ReadShortByteArray{
         @Override
         public void read(ByteBuf buf) {

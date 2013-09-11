@@ -168,7 +168,8 @@ public class PacketUtils {
         // Chunk data
         packetInstructions.put( (byte)0x33, new PacketInstruction[] {
             PacketInstruction.ReadInt, PacketInstruction.ReadInt, PacketInstruction.ReadBoolean,
-                PacketInstruction.ReadShort, PacketInstruction.ReadShort, PacketInstruction.ReadIntArray
+                PacketInstruction.ReadUnsignedShort, PacketInstruction.ReadUnsignedShort,
+                PacketInstruction.ReadIntUnsignedByteArray
         } );
 
         // Multi block change
