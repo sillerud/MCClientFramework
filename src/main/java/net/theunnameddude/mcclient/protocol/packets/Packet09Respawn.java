@@ -26,7 +26,7 @@ public class Packet09Respawn extends BasePacket {
         dimention = buf.readInt();
         difficulty = buf.readByte();
         gamemode = buf.readByte();
-        worldHeight = buf.readByte();
+        worldHeight = buf.readShort();
         levelType = readString( buf );
     }
 
