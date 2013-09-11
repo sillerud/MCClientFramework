@@ -232,6 +232,12 @@ public class PacketUtils {
             PacketInstruction.ReadByte, PacketInstruction.ReadByte
         } );
 
+        // Thunderbolt! D:
+        packetInstructions.put( (byte)0x47, new PacketInstruction[] {
+            PacketInstruction.ReadInt, PacketInstruction.ReadInt, PacketInstruction.ReadInt,
+                PacketInstruction.ReadByte, PacketInstruction.ReadInt
+        } );
+
         // Open window
         packetInstructions.put( (byte)0x64, new PacketInstruction[] {
                 PacketInstruction.ReadOptionalWindow
