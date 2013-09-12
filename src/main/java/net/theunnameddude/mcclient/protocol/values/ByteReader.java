@@ -2,14 +2,18 @@ package net.theunnameddude.mcclient.protocol.values;
 
 import io.netty.buffer.ByteBuf;
 
-public class ByteReader extends ValueReader<java.lang.Byte> {
+public class ByteReader extends ValueReader<Byte> {
 
-    public Byte(ValueReader<java.lang.Byte> parent) {
+    public ByteReader(ValueReader parent) {
         super(parent);
     }
 
+    public ByteReader() {
+        super();
+    }
+
     @Override
-    java.lang.Byte read(ByteBuf buf) {
+    Byte read(ByteBuf buf) {
         return buf.readByte();
     }
 }

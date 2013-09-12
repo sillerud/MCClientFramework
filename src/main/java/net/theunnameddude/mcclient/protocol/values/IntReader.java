@@ -3,8 +3,12 @@ package net.theunnameddude.mcclient.protocol.values;
 import io.netty.buffer.ByteBuf;
 
 public class IntReader extends ValueReader<Integer> {
-    public Int(ValueReader<Integer> parent) {
-        super(parent);
+    public IntReader(ValueReader parent) {
+        super( parent );
+    }
+
+    public IntReader() {
+        super();
     }
 
     @Override

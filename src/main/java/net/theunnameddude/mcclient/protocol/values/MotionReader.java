@@ -1,11 +1,11 @@
 package net.theunnameddude.mcclient.protocol.values;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kevin
- * Date: 12.09.13
- * Time: 15:57
- * To change this template use File | Settings | File Templates.
- */
-public class MotionReader {
+import io.netty.buffer.ByteBuf;
+
+public class MotionReader extends ValueReader {
+    @Override
+    Object read(ByteBuf buf) {
+
+        return null;
+    }
 }

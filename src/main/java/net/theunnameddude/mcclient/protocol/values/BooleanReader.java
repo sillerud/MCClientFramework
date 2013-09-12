@@ -1,11 +1,19 @@
 package net.theunnameddude.mcclient.protocol.values;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kevin
- * Date: 12.09.13
- * Time: 15:01
- * To change this template use File | Settings | File Templates.
- */
-public class BooleanReader {
+import io.netty.buffer.ByteBuf;
+
+public class BooleanReader extends ValueReader<Boolean> {
+
+    public BooleanReader(ValueReader parent) {
+        super( parent );
+    }
+
+    public BooleanReader() {
+        super();
+    }
+
+    @Override
+    Boolean read(ByteBuf buf) {
+        return buf.readBoolean();
+    }
 }

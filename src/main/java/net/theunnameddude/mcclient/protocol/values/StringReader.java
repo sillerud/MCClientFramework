@@ -1,11 +1,24 @@
 package net.theunnameddude.mcclient.protocol.values;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kevin
- * Date: 12.09.13
- * Time: 15:32
- * To change this template use File | Settings | File Templates.
- */
-public class StringReader {
+import io.netty.buffer.ByteBuf;
+
+public class StringReader extends ValueReader<String> {
+
+    public StringReader() {
+        super();
+    }
+
+    public StringReader(ShortReader parent) {
+        super( parent );
+    }
+
+    @Override
+    String read(ByteBuf buf) {
+        short length = buf.readShort();
+        char[] chars = new char[ length ];
+        for( int i = 0; i < chars.length; i++ ) {
+            chars[ i ] = buf.readChar();
+        }
+        return new String( chars );
+    }
 }
