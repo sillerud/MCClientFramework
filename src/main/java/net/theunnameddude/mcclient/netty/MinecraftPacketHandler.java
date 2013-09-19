@@ -47,7 +47,7 @@ public class MinecraftPacketHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         client.setProtocolStatus( ProtocolStatus.Initial );
         if ( client.getAuth() == null ) {
-            sendPacket( new Packet02Handshake( "TOG", host, client.port ) );
+            sendPacket( new Packet02Handshake( client.getAuth().getUsername(), host, client.port ) );
         } else {
             sendPacket( new Packet02Handshake( client.getAuth().getUsername(), host, 25565 ) );
         }

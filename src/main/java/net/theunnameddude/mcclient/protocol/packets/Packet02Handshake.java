@@ -6,7 +6,7 @@ import net.theunnameddude.mcclient.protocol.PacketHandler;
 
 public class Packet02Handshake extends BasePacket {
 
-    public final static byte protocolVersion = 74;
+    public final static byte protocolVersion = 78;
     String username;
     String host;
     int port;
