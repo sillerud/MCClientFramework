@@ -14,7 +14,7 @@ public class Packet01LoginRequest extends BasePacket {
     byte maxPlayers;
 
     public Packet01LoginRequest() {
-        super( 0x01 );
+        super( 0x01, "login-request" );
     }
 
     @Override

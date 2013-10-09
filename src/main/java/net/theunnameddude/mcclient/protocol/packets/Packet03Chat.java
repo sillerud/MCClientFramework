@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class Packet03Chat extends BasePacket {
     JSONObject message;
     public Packet03Chat() {
-        super( 0x03 );
+        super( 0x03, "chat" );
     }
 
     public Packet03Chat(JSONObject message) {

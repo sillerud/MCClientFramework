@@ -8,7 +8,7 @@ public class Packet00KeepAlive extends BasePacket {
     int id;
 
     public Packet00KeepAlive() {
-        super( 0x00 );
+        super( 0x00, "keep-alive" );
     }
 
     public Packet00KeepAlive(int id) {

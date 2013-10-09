@@ -12,7 +12,7 @@ public class Packet02Handshake extends BasePacket {
     int port;
 
     public Packet02Handshake() {
-        super( 0x02 );
+        super( 0x02, "handshake" );
     }
 
     public Packet02Handshake(String username, String host, int port) {

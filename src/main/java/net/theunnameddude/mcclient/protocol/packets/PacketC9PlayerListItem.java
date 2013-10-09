@@ -11,7 +11,7 @@ public class PacketC9PlayerListItem extends BasePacket {
     short ping;
 
     public PacketC9PlayerListItem() {
-        super( 0xC9 );
+        super( 0xC9, "player-list-item" );
     }
 
     @Override

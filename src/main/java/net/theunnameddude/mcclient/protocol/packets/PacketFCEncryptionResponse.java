@@ -10,7 +10,7 @@ public class PacketFCEncryptionResponse extends BasePacket {
     private byte[] token;
 
     public PacketFCEncryptionResponse() {
-        super( 0xFC );
+        super( 0xFC, "encryption-response" );
     }
 
     public PacketFCEncryptionResponse( byte[] sharedSecret, byte[] token ) {

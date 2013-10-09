@@ -14,7 +14,7 @@ public class PacketD1Team extends BasePacket {
     short playerCount;
     String[] players;
     public PacketD1Team() {
-        super( 0xD1 );
+        super( 0xD1, "team" );
     }
 
     @Override

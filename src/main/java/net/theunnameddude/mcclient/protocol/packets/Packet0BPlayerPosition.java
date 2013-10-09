@@ -12,7 +12,7 @@ public class Packet0BPlayerPosition extends BasePacket {
     boolean onGround;
 
     public Packet0BPlayerPosition() {
-        super( 0x0B );
+        super( 0x0B, "player-position" );
     }
 
     public Packet0BPlayerPosition( double x, double y, double z, double stance, boolean onGround) {

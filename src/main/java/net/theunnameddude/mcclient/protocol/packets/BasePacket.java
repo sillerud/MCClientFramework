@@ -7,9 +7,11 @@ import net.theunnameddude.mcclient.protocol.PacketHandler;
 public abstract class BasePacket {
 
     int packetId;
+    String packetName;
 
-    BasePacket( int packetId ) {
+    BasePacket( int packetId, String packetName ) {
         this.packetId = packetId;
+        this.packetName = packetName;
     }
 
     public int getPacketId() {
@@ -48,5 +50,9 @@ public abstract class BasePacket {
         byte[] bytes = new byte[length];
         buf.readBytes( bytes );
         return bytes;
+    }
+
+    public String getPacketName() {
+        return packetName;
     }
 }

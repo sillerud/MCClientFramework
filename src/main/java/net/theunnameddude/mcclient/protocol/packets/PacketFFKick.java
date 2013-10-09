@@ -8,7 +8,7 @@ public class PacketFFKick extends BasePacket {
     String reason;
 
     public PacketFFKick() {
-        super( 0xFF );
+        super( 0xFF, "kick" );
     }
 
     public PacketFFKick(String reason) {

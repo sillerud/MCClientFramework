@@ -10,7 +10,7 @@ public class Packet06SpawnPosition extends BasePacket {
     int z;
 
     public Packet06SpawnPosition() {
-        super( 0x06 );
+        super( 0x06, "spawn-position" );
     }
 
     @Override

@@ -9,7 +9,7 @@ public class PacketFAPluginMessage extends BasePacket {
     byte[] content;
 
     public PacketFAPluginMessage() {
-        super( 0xFA );
+        super( 0xFA, "plugin-message" );
     }
 
     public PacketFAPluginMessage(String channel, byte[] content) {

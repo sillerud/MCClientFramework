@@ -7,7 +7,7 @@ import net.theunnameddude.mcclient.protocol.PacketHandler;
 public class Packet09Respawn extends BasePacket {
 
     public Packet09Respawn() {
-        super( 0x09 );
+        super( 0x09, "respawn" );
     }
 
     int dimention;

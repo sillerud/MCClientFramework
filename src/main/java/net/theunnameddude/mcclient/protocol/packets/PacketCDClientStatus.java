@@ -9,7 +9,7 @@ public class PacketCDClientStatus extends BasePacket {
     byte payload;
 
     public PacketCDClientStatus() {
-        super( 0xCD );
+        super( 0xCD, "client-status" );
         payload = 0;
     }
 

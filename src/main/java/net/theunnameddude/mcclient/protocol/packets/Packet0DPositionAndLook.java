@@ -18,7 +18,7 @@ public class Packet0DPositionAndLook extends BasePacket {
     }
 
     public Packet0DPositionAndLook() {
-        super( 0x0D );
+        super( 0x0D, "position-and-look" );
     }
 
     public Packet0DPositionAndLook( double x, double y, double z, double stance, float yaw, float pitch, boolean onGround) {
