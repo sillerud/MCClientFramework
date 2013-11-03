@@ -42,7 +42,7 @@ public abstract class BasePacket {
             buf.readBytes( content );
             return new String( content, Charset.forName( "UTF-8" ) );
         } else {
-            int length = buf.readShort();
+            int length = buf.readUnsignedShort();
             char[] chars = new char[ length ];
             for ( int i = 0; i < length; i++ ) {
                 chars[i] = buf.readChar();
@@ -57,7 +57,7 @@ public abstract class BasePacket {
     }
 
     public byte[] readBytes( ByteBuf buf ) {
-        short length = buf.readShort();
+        int length = buf.readUnsignedShort();
         byte[] bytes = new byte[length];
         buf.readBytes( bytes );
         return bytes;

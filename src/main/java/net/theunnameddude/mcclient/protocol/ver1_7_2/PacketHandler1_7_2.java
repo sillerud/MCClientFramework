@@ -39,11 +39,11 @@ public class PacketHandler1_7_2 extends PacketHandler {
     }
 
     public void handle(PacketEncryptionResponseBase packet) {
-        if ( packet.getSharedSecret().length == 0 && packet.getToken().length == 0 ) {
+       /* if ( packet.getSharedSecret().length == 0 && packet.getToken().length == 0 ) {
             try {
                 Cipher decoder = Cipher.getInstance( "AES/CFB8/NoPadding" );
-                decoder.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(secretKey.getEncoded()));
-                client.getChannel().pipeline().addBefore("packet-decoder", "decrypter", new EncryptionDecoder(decoder));
+                decoder.init( Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec( secretKey.getEncoded() ) );
+                client.getChannel().pipeline().addBefore( "packet-decoder", "decrypter", new EncryptionDecoder( decoder ) );
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             } catch (NoSuchPaddingException e) {
@@ -54,67 +54,60 @@ public class PacketHandler1_7_2 extends PacketHandler {
                 e.printStackTrace();
             }
             client.sendPacket( client.pc.packetClientStatus() );
-        }
+        } */
     }
 
     public void handle(PacketEncryptionRequestBase packet) {
         client.setProtocolStatus( ProtocolStatus.Authenticating );
-        if ( packet.getServerId().equals("-")) {
-            client.sendPacket( client.pc.packetClientStatus() );
-        } else {
+        try {
+            this.secretKey = EncryptionUtil.getSecret();
+            serverPubKey = EncryptionUtil.getPubkey( packet.getPublicKey() );
+
+            byte[] sharedKey = EncryptionUtil.encryptData(serverPubKey, secretKey.getEncoded());
+            byte[] token = EncryptionUtil.encryptData(serverPubKey, packet.getToken());
+
+            MessageDigest sha1 = MessageDigest.getInstance( "SHA-1" );
+            sha1.update( packet.getServerId().trim().getBytes( "ISO_8859_1" ) );
+            sha1.update( secretKey.getEncoded() );
+            sha1.update( serverPubKey.getEncoded() );
+
+            String serverIdStr = new BigInteger( sha1.digest() ).toString( 16 );
+
+            StringBuilder stringurl = new StringBuilder();
+            stringurl.append( "http://session.minecraft.net/game/joinserver.jsp" )
+                    .append( "?user=" ).append( URLEncoder.encode(client.getAuth().getUsername(), "UTF-8") )
+                    .append( "&sessionId=" ).append( URLEncoder.encode( client.getAuth().getConnectId(), "UTF-8" ) )
+                    .append( "&serverId=" ).append(URLEncoder.encode(serverIdStr, "UTF-8"));
+
             try {
-                this.secretKey = EncryptionUtil.getSecret();
-                serverPubKey = EncryptionUtil.getPubkey( packet.getPublicKey() );
+                URL url = new URL( stringurl.toString() );
+                BufferedReader reader = new BufferedReader( new InputStreamReader( url.openConnection().getInputStream() ) );
+                String urlResponse = reader.readLine();
 
-                byte[] sharedKey = EncryptionUtil.encryptData(serverPubKey, secretKey.getEncoded());
-                byte[] token = EncryptionUtil.encryptData(serverPubKey, packet.getToken());
-
-                PacketEncryptionResponseBase response = client.pc.packetEncryptionResponse( sharedKey, token );
-
-                MessageDigest sha1 = MessageDigest.getInstance( "SHA-1" );
-                sha1.update(packet.getServerId().trim().getBytes("ISO_8859_1"));
-                sha1.update( secretKey.getEncoded() );
-                sha1.update( serverPubKey.getEncoded() );
-
-                String serverIdStr = new BigInteger( sha1.digest() ).toString( 16 );
-
-                StringBuilder stringurl = new StringBuilder();
-                String urlStr = "http://session.minecraft.net/game/joinserver.jsp";
-                stringurl.append( "http://session.minecraft.net/game/joinserver.jsp" )
-                        .append( "?user=" ).append( URLEncoder.encode(client.getAuth().getUsername(), "UTF-8") )
-                        .append( "&sessionId=" ).append( URLEncoder.encode( client.getAuth().getConnectId(), "UTF-8" ) )
-                        .append( "&serverId=" ).append(URLEncoder.encode(serverIdStr, "UTF-8"));
-
-                try {
-                    URL url = new URL( stringurl.toString() );
-                    BufferedReader reader = new BufferedReader( new InputStreamReader( url.openConnection().getInputStream() ) );
-                    String urlResponse = reader.readLine();
-
-                    if ( !"OK".equals(urlResponse) ) {
-                        client.getListenerHandler().onAuthFail(urlResponse);
-                    } else {
-                        client.sendPacket( client.pc.packetEncryptionResponse( sharedKey, token ) );
-
-                    }
-
-                    reader.close();
-                    Cipher encoder = Cipher.getInstance( "AES/CFB8/NoPadding" );
-                    encoder.init( Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec( secretKey.getEncoded() ) );
-                    client.getChannel().pipeline().addBefore("packet-decoder", "encrypter", new EncryptionEncoder(encoder));
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if ( !"OK".equals(urlResponse) ) {
+                    client.getListenerHandler().onAuthFail(urlResponse);
+                } else {
+                    client.sendPacket( client.pc.packetEncryptionResponse( sharedKey, token ) );
                 }
 
-                //ctx.pipeline().addBefore( "packet-decoder", "decrypt", new EncryptionEncoder( cipher ) );
-            } catch (NoSuchAlgorithmException e) {
+                reader.close();
+                Cipher encoder = Cipher.getInstance( "AES/CFB8/NoPadding" );
+                encoder.init( Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec( secretKey.getEncoded() ) );
+                client.getChannel().pipeline().addBefore( "packet-decoder", "encrypter", new EncryptionEncoder(encoder ) );
+                Cipher decoder = Cipher.getInstance( "AES/CFB8/NoPadding" );
+                decoder.init( Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec( secretKey.getEncoded() ) );
+                client.getChannel().pipeline().addBefore( "packet-decoder", "decrypter", new EncryptionDecoder( decoder ) );
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (GeneralSecurityException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
         }
     }
 

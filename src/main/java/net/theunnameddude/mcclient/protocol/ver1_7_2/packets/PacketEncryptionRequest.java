@@ -11,6 +11,7 @@ public class PacketEncryptionRequest extends PacketEncryptionRequestBase {
 
     @Override
     public ByteBuf getPacket(ByteBuf buf) {
+        setString( buf, serverId, true );
         setBytes( buf, publicKey );
         setBytes( buf, token );
         return buf;
@@ -18,6 +19,7 @@ public class PacketEncryptionRequest extends PacketEncryptionRequestBase {
 
     @Override
     public void onPacket(ByteBuf buf) {
+        serverId = readString( buf, true );
         publicKey = readBytes( buf );
         token = readBytes( buf );
     }

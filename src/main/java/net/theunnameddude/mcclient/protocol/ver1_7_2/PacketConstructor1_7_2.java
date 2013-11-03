@@ -26,7 +26,11 @@ public class PacketConstructor1_7_2 implements PacketConstructor {
 
     @Override
     public void disconnect(MinecraftClientImpl client) {
-
+        try {
+            client.getChannel().eventLoop().shutdownGracefully().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

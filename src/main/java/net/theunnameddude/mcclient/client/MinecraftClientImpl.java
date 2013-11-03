@@ -8,6 +8,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import lombok.Getter;
 import net.theunnameddude.mcclient.api.ClientListener;
 import net.theunnameddude.mcclient.api.MinecraftClient;
 import net.theunnameddude.mcclient.api.Player;
@@ -26,6 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MinecraftClientImpl implements MinecraftClient, Runnable {
 
+    @Getter
     private SocketChannel channel;
     private MinecraftPacketHandler packetHandler;
     private ClientListenerHandler listenerHandler = new ClientListenerHandler();
