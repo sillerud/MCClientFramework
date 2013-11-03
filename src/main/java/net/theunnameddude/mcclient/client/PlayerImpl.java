@@ -1,7 +1,7 @@
 package net.theunnameddude.mcclient.client;
 
 import net.theunnameddude.mcclient.api.Player;
-import net.theunnameddude.mcclient.protocol.packets.Packet0DPositionAndLook;
+import net.theunnameddude.mcclient.protocol.ver1_6_4.packets.Packet0DPositionAndLook;
 
 public class PlayerImpl implements Player {
 
@@ -72,6 +72,6 @@ public class PlayerImpl implements Player {
 
     @Override
     public void sendLocation() {
-        client.sendPacket( new Packet0DPositionAndLook( x, y, z, stance, yaw, pitch, onGround) );
+        client.sendPacket( client.pc.packetPositionAndLook( x, y, z, stance, yaw, pitch, onGround) );
     }
 }

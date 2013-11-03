@@ -13,12 +13,9 @@ import net.theunnameddude.mcclient.api.MinecraftClient;
 import net.theunnameddude.mcclient.api.Player;
 import net.theunnameddude.mcclient.api.ProtocolStatus;
 import net.theunnameddude.mcclient.api.auth.AuthenticationResponse;
-import net.theunnameddude.mcclient.netty.MinecraftPacketDecoder;
-import net.theunnameddude.mcclient.netty.MinecraftPacketEncoder;
 import net.theunnameddude.mcclient.netty.MinecraftPacketHandler;
-import net.theunnameddude.mcclient.protocol.packets.BasePacket;
-import net.theunnameddude.mcclient.protocol.packets.Packet03Chat;
-import net.theunnameddude.mcclient.protocol.packets.PacketFFKick;
+import net.theunnameddude.mcclient.protocol.PacketConstructor;
+import net.theunnameddude.mcclient.protocol.base.BasePacket;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,12 +36,14 @@ public class MinecraftClientImpl implements MinecraftClient, Runnable {
     public HashMap<String, Short> pingMap = new HashMap<String, Short>();
     public int port;
     public String host;
+    public PacketConstructor pc;
 
     @Override
-    public void connect(String host, int port, AuthenticationResponse auth) {
+    public void connect(String host, int port, AuthenticationResponse auth, PacketConstructor version) {
         this.port = port;
         this.host = host;
         this.auth = auth;
+        this.pc = version;
         new Thread( this, "MinecraftClientThread" ).start();
     }
 
@@ -96,22 +95,24 @@ public class MinecraftClientImpl implements MinecraftClient, Runnable {
     public class MinecraftChannelInitializer extends ChannelInitializer<SocketChannel> {
         MinecraftPacketHandler packetHandler;
         MinecraftClientImpl client;
-        public MinecraftChannelInitializer(MinecraftPacketHandler packetHandler, MinecraftClientImpl client) {
+        PacketConstructor version;
+        public MinecraftChannelInitializer(MinecraftPacketHandler packetHandler, MinecraftClientImpl client, PacketConstructor version) {
             this.packetHandler = packetHandler;
             this.client = client;
+            this.version = version;
         }
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
             ch.pipeline().addLast( "timeout", new ReadTimeoutHandler( 100000, TimeUnit.MILLISECONDS ) );
-            ch.pipeline().addLast( "packet-decoder", new MinecraftPacketDecoder() );
-            ch.pipeline().addLast( "packet-encoder", new MinecraftPacketEncoder() );
+            ch.pipeline().addLast( "packet-decoder", version.createPacketDecoder() );
+            ch.pipeline().addLast( "packet-encoder", version.createPacketEncoder() );
             ch.pipeline().addLast( "mc-packet-handler",  packetHandler );
             client.channel = ch;
         }
     }
 
     public void shutdown() {
-        sendPacket( new PacketFFKick( "Quitting" ) );
+        pc.disconnect( this );
     }
 
     @Override
@@ -128,7 +129,7 @@ public class MinecraftClientImpl implements MinecraftClient, Runnable {
             b.channel(NioSocketChannel.class)
                     .group( group )
                     .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 )
-                    .handler(new MinecraftChannelInitializer( packetHandler, this ) )
+                    .handler(new MinecraftChannelInitializer( packetHandler, this, pc ) )
                     .connect( host, port ).channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -150,7 +151,7 @@ public class MinecraftClientImpl implements MinecraftClient, Runnable {
     @Override
     public void sendMessage(String message) {
         try {
-            sendPacket( new Packet03Chat( new JSONObject().put( "text", message ) ) );
+            sendPacket( pc.packetChat( new JSONObject().put( "text", message ) ) );
         } catch (JSONException e) {
             e.printStackTrace();
         }

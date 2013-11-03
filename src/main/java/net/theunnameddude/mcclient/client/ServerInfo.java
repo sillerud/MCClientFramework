@@ -2,12 +2,12 @@ package net.theunnameddude.mcclient.client;
 
 public class ServerInfo {
     int entityId;
-    byte difficulty;
+    short difficulty;
     byte dimention;
-    byte gameMode;
+    short gameMode;
     String levelType;
-    byte maxPlayers;
-    public ServerInfo(int entityId, byte difficulty, byte dimention, byte gameMode, String levelType, byte maxPlayers) {
+    short maxPlayers;
+    public ServerInfo(int entityId, short difficulty, byte dimention, short gameMode, String levelType, short maxPlayers) {
         this.entityId = entityId;
         this.difficulty = difficulty;
         this.dimention = dimention;
@@ -20,7 +20,7 @@ public class ServerInfo {
         return entityId;
     }
 
-    public byte getDifficulty() {
+    public short getDifficulty() {
         return difficulty;
     }
 
@@ -28,7 +28,7 @@ public class ServerInfo {
         return dimention;
     }
 
-    public byte getGameMode() {
+    public short getGameMode() {
         return gameMode;
     }
 
@@ -36,7 +36,7 @@ public class ServerInfo {
         return levelType;
     }
 
-    public byte getMaxPlayers() {
+    public short getMaxPlayers() {
         return maxPlayers;
     }
 }

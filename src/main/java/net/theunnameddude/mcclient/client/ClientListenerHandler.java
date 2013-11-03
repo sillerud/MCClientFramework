@@ -2,9 +2,9 @@ package net.theunnameddude.mcclient.client;
 
 import net.theunnameddude.mcclient.api.ClientListener;
 import net.theunnameddude.mcclient.api.ProtocolStatus;
-import net.theunnameddude.mcclient.protocol.packets.Packet09Respawn;
-import net.theunnameddude.mcclient.protocol.packets.PacketD1Team;
-import net.theunnameddude.mcclient.protocol.packets.PacketFAPluginMessage;
+import net.theunnameddude.mcclient.protocol.base.PacketPluginMessageBase;
+import net.theunnameddude.mcclient.protocol.base.PacketRespawnBase;
+import net.theunnameddude.mcclient.protocol.base.PacketTeamBase;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class ClientListenerHandler extends ClientListener {
     }
 
     @Override
-    public void onTeamPacket(PacketD1Team packet) {
+    public void onTeamPacket(PacketTeamBase packet) {
         lock.readLock().lock();
         try {
             for ( ClientListener listener : listeners ) {
@@ -99,7 +99,7 @@ public class ClientListenerHandler extends ClientListener {
     }
 
     @Override
-    public void onPluginMessage(PacketFAPluginMessage packet) {
+    public void onPluginMessage(PacketPluginMessageBase packet) {
         lock.readLock().lock();
         try {
             for ( ClientListener listener : listeners ) {
@@ -111,7 +111,7 @@ public class ClientListenerHandler extends ClientListener {
     }
 
     @Override
-    public void onRespawn(Packet09Respawn packet) {
+    public void onRespawn(PacketRespawnBase packet) {
         lock.readLock().lock();
         try {
             for ( ClientListener listener : listeners ) {

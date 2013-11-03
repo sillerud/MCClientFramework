@@ -1,7 +1,8 @@
 package net.theunnameddude.mcclient.api;
 
 import net.theunnameddude.mcclient.api.auth.AuthenticationResponse;
-import net.theunnameddude.mcclient.protocol.packets.BasePacket;
+import net.theunnameddude.mcclient.protocol.PacketConstructor;
+import net.theunnameddude.mcclient.protocol.base.BasePacket;
 
 public interface MinecraftClient {
     public Player getPlayer();
@@ -11,7 +12,7 @@ public interface MinecraftClient {
     public void shutdown();
     public int getPort();
     public String[] getUsers();
-    public void connect(String host, int port, AuthenticationResponse auth);
+    public void connect(String host, int port, AuthenticationResponse auth, PacketConstructor version);
     public void addListener(ClientListener listener);
     public void sendMessage(String message);
     public ProtocolStatus getProtocolStatus();

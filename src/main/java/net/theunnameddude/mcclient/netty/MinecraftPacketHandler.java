@@ -5,8 +5,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.theunnameddude.mcclient.api.ProtocolStatus;
 import net.theunnameddude.mcclient.client.MinecraftClientImpl;
 import net.theunnameddude.mcclient.protocol.PacketHandler;
-import net.theunnameddude.mcclient.protocol.packets.BasePacket;
-import net.theunnameddude.mcclient.protocol.packets.Packet02Handshake;
+import net.theunnameddude.mcclient.protocol.base.BasePacket;
+import net.theunnameddude.mcclient.protocol.ver1_6_4.packets.Packet02Handshake;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -20,7 +20,7 @@ public class MinecraftPacketHandler extends ChannelInboundHandlerAdapter {
 
     public MinecraftPacketHandler(MinecraftClientImpl client, String host) {
         this.client = client;
-        packetHandler = new PacketHandler( client );
+        packetHandler = client.pc.createPacketHandler( client );
         try {
             keys = KeyPairGenerator.getInstance( "RSA" ).generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
@@ -40,16 +40,16 @@ public class MinecraftPacketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasePacket packet = (BasePacket)msg;
-        packet.handle(packetHandler, ctx);
+        packet.handle( packetHandler );
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         client.setProtocolStatus( ProtocolStatus.Initial );
         if ( client.getAuth() == null ) {
-            sendPacket( new Packet02Handshake( client.getAuth().getUsername(), host, client.port ) );
+            client.pc.handshake( client.getAuth().getUsername(), host, client.port, client );
         } else {
-            sendPacket( new Packet02Handshake( client.getAuth().getUsername(), host, 25565 ) );
+            client.pc.handshake( client.getAuth().getUsername(), host, 25565, client );
         }
     }
 

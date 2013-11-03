@@ -1,9 +1,9 @@
 package net.theunnameddude.mcclient.api;
 
 import net.theunnameddude.mcclient.client.ServerInfo;
-import net.theunnameddude.mcclient.protocol.packets.Packet09Respawn;
-import net.theunnameddude.mcclient.protocol.packets.PacketD1Team;
-import net.theunnameddude.mcclient.protocol.packets.PacketFAPluginMessage;
+import net.theunnameddude.mcclient.protocol.base.PacketPluginMessageBase;
+import net.theunnameddude.mcclient.protocol.base.PacketRespawnBase;
+import net.theunnameddude.mcclient.protocol.base.PacketTeamBase;
 import org.json.JSONObject;
 
 public abstract class ClientListener {
@@ -28,7 +28,7 @@ public abstract class ClientListener {
 
     }
 
-    public void onTeamPacket(PacketD1Team packet) {
+    public void onTeamPacket(PacketTeamBase packet) {
 
     }
 
@@ -36,11 +36,11 @@ public abstract class ClientListener {
 
     }
 
-    public void onPluginMessage(PacketFAPluginMessage packet) {
+    public void onPluginMessage(PacketPluginMessageBase packet) {
 
     }
 
-    public void onRespawn(Packet09Respawn packet) {
+    public void onRespawn(PacketRespawnBase packet) {
 
     }
 
