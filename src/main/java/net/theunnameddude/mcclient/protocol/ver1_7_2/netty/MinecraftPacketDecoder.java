@@ -19,25 +19,26 @@ public class MinecraftPacketDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         in.markReaderIndex();
-        byte[] sizeContent = new byte[ 3 ];
-        for ( int i = 0; i < sizeContent.length; i++ ) {
+        int size = 0;
+        for ( int i = 0; i < 3; i++ ) {
             if ( !in.isReadable() ) {
                 in.resetReaderIndex();
                 return;
             }
-            sizeContent[ i ] = in.readByte();
-            if ( sizeContent[ i ] >= 0 ) {
-                int size = BasePacket.readVarInt( Unpooled.wrappedBuffer( sizeContent ) ); // Read the packet size
-                if ( in.readableBytes() < size ) { // If there is not enough readable bytes ignore them
+            byte b = in.readByte();
+            size |= ( b & 0x7F ) << ( i * 7 );
+            if ( ( b & 0x80 ) != 0x80 ) {
+                if ( in.readableBytes() < size ) {
                     in.resetReaderIndex();
                 } else {
-                    ByteBuf buf = in.readBytes( size );
-                    int packetId = BasePacket.readVarInt( buf );
-                    BasePacket packet = pc.readPacket( (short)packetId, buf );
-                    if ( packet == null ) {
-                        buf.skipBytes( buf.readableBytes() );
-                    } else {
+                    int packetId = BasePacket.readVarInt( in );
+                    int packetIdSize = MinecraftPacketEncoder.varintSize( packetId );
+                    BasePacket packet = pc.readPacket( (short)packetId, null );
+                    if ( packet != null ) {
+                        packet.onPacket( in.readBytes( size - packetIdSize ) );
                         out.add( packet );
+                    } else {
+                        in.skipBytes( size - packetIdSize );
                     }
                 }
                 return;

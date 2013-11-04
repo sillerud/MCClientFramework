@@ -29,10 +29,6 @@ public class MinecraftPacketHandler extends ChannelInboundHandlerAdapter {
         this.host = host;
     }
 
-    public void sendPacket( BasePacket packet ) {
-        client.sendPacket( packet );
-    }
-
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
     }

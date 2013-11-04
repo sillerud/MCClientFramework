@@ -23,7 +23,7 @@ public class MinecraftPacketEncoder extends MessageToByteEncoder<BasePacket> {
     }
 
 
-    private static int varintSize(int paramInt) {
+    public static int varintSize(int paramInt) {
         if ( ( paramInt & 0xFFFFFF80 ) == 0 ) {
             return 1;
         } else if ( ( paramInt & 0xFFFFC000 ) == 0 ) {

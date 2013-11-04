@@ -86,9 +86,6 @@ public class PacketConstructor1_7_2 implements PacketConstructor {
                 initDone = true;
             }
         }
-        if ( p != null ) {
-            p.onPacket( buf );
-        }
         return p;
     }
 
