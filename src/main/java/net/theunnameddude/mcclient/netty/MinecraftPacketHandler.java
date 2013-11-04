@@ -46,11 +46,7 @@ public class MinecraftPacketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         client.setProtocolStatus( ProtocolStatus.Initial );
-        if ( client.getAuth() == null ) {
-            client.pc.handshake( client.getAuth().getUsername(), host, client.port, client );
-        } else {
-            client.pc.handshake( client.getAuth().getUsername(), host, 25565, client );
-        }
+        client.pc.handshake( client.getAuth().getUsername(), host, client.port, client );
     }
 
     @Override
